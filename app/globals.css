@@ -1,16 +1,51 @@
-/* === Contenedor raíz de la llama === */
-.flame-root {
+/* === ESTILOS GLOBALES PARA TEMA NEGRO === */
+html, body {
+  background-color: #000000;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* === CONTENEDOR DE LA LLAMA - Z-INDEX BAJO === */
+.flame-container {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  z-index: 0;
+  z-index: 1; /* BAJO */
   pointer-events: none;
-  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.15) 0%, transparent 60%);
+  background: transparent;
+  isolation: isolate; /* Aísla el mix-blend-mode */
 }
 
-/* === Capas principales === */
+/* === CONTENEDOR DEL BOTÓN - Z-INDEX MUY ALTO === */
+.button-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: left;
+  z-index: 10000; /* MUY ALTO */
+  pointer-events: auto;
+}
+
+/* === BOTÓN CON ESTILOS MUY VISIBLES === */
+.apagar-btn {
+  padding: 16px 32px;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  background-color: gray;
+}
+
+
+/* === Capas de llama SIN mix-blend-mode que afecte la UI === */
 .flame-base,
 .flame-middle,
 .flame-outer {
@@ -20,133 +55,271 @@
   transform: translate(-50%, -50%);
   pointer-events: none;
   will-change: transform, opacity, filter;
-}
-
-/* 🔥 Base: cubre completamente */
-.flame-base {
-  width: 200vw;          /* más grande para eliminar bordes blancos */
-  height: 200vh;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at center,
-    #ffb300 0%,
-    #ff8c00 20%,
-    #ff4500 50%,
-    #ff2200 70%,
-    rgba(0, 0, 0, 0.6) 100%
-  );
-  opacity: 0.9;
-  animation: flicker-base 1.3s infinite alternate ease-in-out;
   mix-blend-mode: screen;
 }
 
-/* 🔥 Capa media */
-.flame-middle {
+/* 🔥 Base */
+.flame-base {
   width: 180vw;
   height: 180vh;
   border-radius: 50%;
   background: radial-gradient(
     circle at center,
-    #ffd700 0%,
-    #ffa500 40%,
-    rgba(255, 140, 0, 0.25) 70%,
-    transparent 90%
+    #ffff00 0%,
+    #ffd700 15%,
+    #ff8c00 30%,
+    #ff4500 50%,
+    #dc143c 70%,
+    #8b0000 85%,
+    transparent 95%
   );
-  opacity: 0.75;
-  animation: flicker-middle 1.1s infinite alternate ease-in-out;
-  animation-delay: 0.3s;
-  mix-blend-mode: screen;
+  opacity: 0.95;
+  animation: 
+    flicker-base 1.2s infinite alternate ease-in-out,
+    color-pulse 4s infinite alternate;
+  filter: brightness(1.2) contrast(1.3);
+}
+
+/* 🔥 Capa media */
+.flame-middle {
+  width: 160vw;
+  height: 160vh;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    #ffeb3b 0%,
+    #ffc107 25%,
+    #ff9800 45%,
+    #ff5722 65%,
+    rgba(220, 20, 60, 0.4) 85%,
+    transparent 95%
+  );
+  opacity: 0.8;
+  animation: 
+    flicker-middle 1.4s infinite alternate ease-in-out,
+    color-shift 3s infinite alternate;
+  animation-delay: 0.2s;
+  filter: brightness(1.1);
 }
 
 /* 🔥 Halo externo */
 .flame-outer {
-  width: 240vw;
-  height: 240vh;
+  width: 220vw;
+  height: 220vh;
   border-radius: 50%;
   background: radial-gradient(
     circle at center,
-    rgba(255, 215, 0, 0.4) 0%,
-    rgba(255, 165, 0, 0.25) 40%,
-    rgba(255, 69, 0, 0.1) 70%,
-    rgba(0, 0, 0, 0.8) 100%
+    rgba(255, 235, 59, 0.6) 0%,
+    rgba(255, 193, 7, 0.4) 20%,
+    rgba(255, 152, 0, 0.3) 40%,
+    rgba(255, 87, 34, 0.2) 60%,
+    rgba(139, 0, 0, 0.1) 80%,
+    transparent 95%
   );
-  opacity: 0.6;
-  animation: flicker-outer 1.8s infinite alternate ease-in-out;
-  animation-delay: 0.6s;
-  mix-blend-mode: screen;
+  opacity: 0.7;
+  animation: 
+    flicker-outer 1.8s infinite alternate ease-in-out,
+    halo-pulse 5s infinite alternate;
+  animation-delay: 0.4s;
 }
 
-/* === Partículas flotantes === */
+/* Resto de las animaciones se mantienen igual... */
+
 .flame-flicker-1,
 .flame-flicker-2,
 .flame-flicker-3 {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle at center, #ffd700 0%, rgba(255, 165, 0, 0.3) 50%, transparent 80%);
-  opacity: 0.4;
   pointer-events: none;
   mix-blend-mode: screen;
   will-change: transform, opacity;
+  filter: brightness(1.3);
 }
 
 .flame-flicker-1 {
-  width: 50vw;
-  height: 50vh;
-  top: 0;
-  left: 0;
-  animation: flame-drift 3s infinite ease-in-out;
+  width: 60vw;
+  height: 60vh;
+  top: 10%;
+  left: 10%;
+  background: radial-gradient(circle at center, 
+    rgba(255, 255, 0, 0.8) 0%,
+    rgba(255, 165, 0, 0.5) 40%,
+    transparent 80%);
+  animation: flame-drift-1 4s infinite ease-in-out;
 }
 
 .flame-flicker-2 {
-  width: 40vw;
-  height: 40vh;
-  bottom: 10%;
-  right: 10%;
-  animation: flame-drift 2.8s infinite ease-in-out;
-  animation-delay: 0.8s;
+  width: 45vw;
+  height: 45vh;
+  bottom: 15%;
+  right: 15%;
+  background: radial-gradient(circle at center, 
+    rgba(255, 193, 7, 0.7) 0%,
+    rgba(255, 87, 34, 0.4) 50%,
+    transparent 85%);
+  animation: flame-drift-2 3.5s infinite ease-in-out;
+  animation-delay: 1.2s;
 }
 
 .flame-flicker-3 {
-  width: 45vw;
-  height: 45vh;
-  top: 20%;
-  right: 20%;
-  animation: flame-drift 3.2s infinite ease-in-out;
-  animation-delay: 1.6s;
+  width: 55vw;
+  height: 55vh;
+  top: 25%;
+  right: 5%;
+  background: radial-gradient(circle at center, 
+    rgba(255, 235, 59, 0.6) 0%,
+    rgba(255, 152, 0, 0.3) 45%,
+    transparent 80%);
+  animation: flame-drift-3 4.2s infinite ease-in-out;
+  animation-delay: 2.1s;
 }
 
-/* === Animaciones === */
+.flame-spark-1,
+.flame-spark-2,
+.flame-spark-3 {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, 
+    #ffff00 0%,
+    #ff8c00 50%,
+    transparent 80%);
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: spark-flash 2s infinite;
+}
+
+.flame-spark-1 {
+  width: 20vw;
+  height: 20vh;
+  top: 30%;
+  left: 20%;
+  animation-delay: 0.5s;
+}
+
+.flame-spark-2 {
+  width: 15vw;
+  height: 15vh;
+  bottom: 25%;
+  right: 25%;
+  animation-delay: 1.5s;
+}
+
+.flame-spark-3 {
+  width: 18vw;
+  height: 18vh;
+  top: 40%;
+  right: 15%;
+  animation-delay: 2.5s;
+}
+
+/* Animaciones (mantener las mismas) */
 @keyframes flicker-base {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.85; filter: brightness(1); }
-  50% { transform: translate(-50%, -52%) scale(1.05); opacity: 0.95; filter: brightness(1.1); }
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1); 
+    opacity: 0.9; 
+    filter: brightness(1.1) hue-rotate(0deg);
+  }
+  25% { 
+    transform: translate(-50%, -52%) scale(1.08); 
+    opacity: 1; 
+    filter: brightness(1.3) hue-rotate(5deg);
+  }
+  50% { 
+    transform: translate(-50%, -48%) scale(0.95); 
+    opacity: 0.85; 
+    filter: brightness(0.9) hue-rotate(-3deg);
+  }
+  75% { 
+    transform: translate(-50%, -51%) scale(1.05); 
+    opacity: 0.95; 
+    filter: brightness(1.2) hue-rotate(2deg);
+  }
 }
 
 @keyframes flicker-middle {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
-  25% { transform: translate(-50%, -51%) scale(1.03); opacity: 0.8; }
-  75% { transform: translate(-50%, -49%) scale(0.97); opacity: 0.6; }
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1); 
+    opacity: 0.75; 
+  }
+  33% { 
+    transform: translate(-50%, -53%) scale(1.1); 
+    opacity: 0.9; 
+  }
+  66% { 
+    transform: translate(-50%, -47%) scale(0.9); 
+    opacity: 0.65; 
+  }
 }
 
 @keyframes flicker-outer {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-  50% { transform: translate(-50%, -51%) scale(1.04); opacity: 0.7; }
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1); 
+    opacity: 0.6; 
+  }
+  50% { 
+    transform: translate(-50%, -54%) scale(1.15); 
+    opacity: 0.8; 
+  }
 }
 
-@keyframes flame-drift {
-  0%, 100% { transform: translate(0,0) scale(1); opacity: 0.35; }
-  25% { transform: translate(2vw, -1vh) scale(1.1); opacity: 0.45; }
-  50% { transform: translate(-2vw, 1vh) scale(0.9); opacity: 0.25; }
-  75% { transform: translate(1vw, -1vh) scale(1.05); opacity: 0.4; }
+@keyframes color-pulse {
+  0%, 100% { filter: hue-rotate(0deg) brightness(1.1); }
+  50% { filter: hue-rotate(10deg) brightness(1.3); }
 }
 
-/* === Modo de movimiento reducido === */
+@keyframes color-shift {
+  0% { filter: hue-rotate(0deg) saturate(1.2); }
+  100% { filter: hue-rotate(15deg) saturate(1.5); }
+}
+
+@keyframes halo-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes flame-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+  25% { transform: translate(4vw, -3vh) scale(1.15); opacity: 0.6; }
+  50% { transform: translate(-3vw, 2vh) scale(0.85); opacity: 0.3; }
+  75% { transform: translate(2vw, -2vh) scale(1.1); opacity: 0.5; }
+}
+
+@keyframes flame-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.35; }
+  25% { transform: translate(-4vw, 2vh) scale(1.1); opacity: 0.55; }
+  50% { transform: translate(3vw, -1vh) scale(0.9); opacity: 0.25; }
+  75% { transform: translate(-2vw, 1vh) scale(1.05); opacity: 0.45; }
+}
+
+@keyframes flame-drift-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+  25% { transform: translate(2vw, -4vh) scale(1.2); opacity: 0.5; }
+  50% { transform: translate(-2vw, 3vh) scale(0.8); opacity: 0.2; }
+  75% { transform: translate(1vw, -3vh) scale(1.1); opacity: 0.4; }
+}
+
+@keyframes spark-flash {
+  0%, 90%, 100% { opacity: 0; transform: scale(0.5); }
+  5%, 15% { opacity: 0.8; transform: scale(1); }
+  10% { opacity: 1; transform: scale(1.2); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .flame-base,
   .flame-middle,
   .flame-outer,
   .flame-flicker-1,
   .flame-flicker-2,
-  .flame-flicker-3 {
+  .flame-flicker-3,
+  .flame-spark-1,
+  .flame-spark-2,
+  .flame-spark-3 {
     animation: none !important;
+  }
+  
+  .flame-base {
+    opacity: 0.9;
+    filter: brightness(1.2);
   }
 }
